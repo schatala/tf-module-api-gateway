@@ -235,3 +235,40 @@ resource "aws_api_gateway_stage" "this" {
   deployment_id = aws_api_gateway_deployment.this.id
   stage_name    = var.stage_name
 }
+
+# ----------------------------
+# Custom Domain + mTLS
+#
+# count = 0 when domain_name is null (the default).
+# Nothing below is created until you pass domain_name,
+# regional_certificate_arn, and mtls_truststore_uri
+# into the module call.
+# ----------------------------
+
+resource "aws_api_gateway_domain_name" "this" {
+  count       = var.domain_name != null ? 1 : 0
+  domain_name = var.domain_name
+
+  regional_certificate_arn = var.regional_certificate_arn
+
+  endpoint_configuration {
+    types = ["REGIONAL"]
+  }
+
+  # mTLS: requires the truststore_uri to be set.
+  # When mtls_truststore_uri is null the block is still present but AWS
+  # requires a value — so we guard the whole domain resource on domain_name
+  # being set, and expect the caller to also supply mtls_truststore_uri
+  # at that point.
+  mutual_tls_authentication {
+    truststore_uri = var.mtls_truststore_uri
+  }
+}
+
+resource "aws_api_gateway_base_path_mapping" "this" {
+  count       = var.domain_name != null ? 1 : 0
+  api_id      = aws_api_gateway_rest_api.this.id
+  stage_name  = aws_api_gateway_stage.this.stage_name
+  domain_name = aws_api_gateway_domain_name.this[0].domain_name
+  base_path   = ""
+}

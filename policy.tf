@@ -16,6 +16,8 @@ locals {
     "18.210.200.207/32",
     "54.145.132.232/32",
     "34.236.28.139/32",
+    # --- SOAP API consumer IPs - replace with your actual IPs ---
+    "3.217.110.156/32",
   ]
 
   selected_whitelist = var.is_production ? local.ip_whitelist_production : local.ip_whitelist_nonproduction

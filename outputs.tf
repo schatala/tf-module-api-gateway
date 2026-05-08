@@ -12,3 +12,9 @@ output "authorizer_lambda_arn" {
   value       = aws_lambda_function.jwt_authorizer.arn
   description = "ARN of the created Entra JWT authorizer Lambda (per API)."
 }
+
+# Only populated once domain_name is set and the custom domain is created.
+output "custom_domain_target" {
+  value       = var.domain_name != null ? aws_api_gateway_domain_name.this[0].regional_domain_name : null
+  description = "Point your DNS CNAME to this value when the custom domain is active."
+}

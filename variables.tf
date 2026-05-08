@@ -36,3 +36,28 @@ EOT
     lambda_arn = string
   }))
 }
+
+# ---------------------------------------------------------------------------
+# mTLS / custom domain — all three default to null so existing callers
+# (e.g. the existing api_gateway block pinned at v1.0.0) are completely
+# unaffected.  Set these only when you are ready to enable the custom domain
+# and mTLS.
+# ---------------------------------------------------------------------------
+
+variable "domain_name" {
+  type        = string
+  description = "Custom domain name for the API (e.g. soap-api.mvsolutions.com). Leave null to skip custom domain and mTLS setup."
+  default     = null
+}
+
+variable "regional_certificate_arn" {
+  type        = string
+  description = "ACM certificate ARN for the custom domain (TLS). Required when domain_name is set."
+  default     = null
+}
+
+variable "mtls_truststore_uri" {
+  type        = string
+  description = "S3 URI of the mTLS truststore PEM bundle (e.g. s3://my-bucket/truststore.pem). Required when domain_name is set and mTLS is needed."
+  default     = null
+}
