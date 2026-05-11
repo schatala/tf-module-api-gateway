@@ -38,6 +38,18 @@ EOT
 }
 
 # ---------------------------------------------------------------------------
+# Optional — when set, this list is used instead of the shared prod/non-prod
+# lists, giving each API gateway its own independent IP allowlist.
+# The existing api_gateway call never passes this so it is completely
+# unaffected and keeps using ip_whitelist_nonproduction as before.
+# ---------------------------------------------------------------------------
+variable "custom_ip_whitelist" {
+  type        = list(string)
+  description = "Explicit CIDR allowlist for this API. Overrides the shared prod/non-prod lists when provided. Leave null to use the shared lists."
+  default     = null
+}
+
+# ---------------------------------------------------------------------------
 # mTLS / custom domain — all three default to null so existing callers
 # (e.g. the existing api_gateway block pinned at v1.0.0) are completely
 # unaffected.  Set these only when you are ready to enable the custom domain
